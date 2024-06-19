@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level 4</title>
+    <style>
+        body{
+            font-family: sans-serif;
+        }
+        .container{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .form-group{
+            margin-bottom: 10px;
+        }
+        input{
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button{
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        table{
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td{
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .action-btn{
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .edit-btn{
+            background-color: #4CAF50;
+            color: white;
+        }
+        .delete-btn{
+            background-color: #f44336;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Add User</h2>
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" placeholder="Enter name">
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" placeholder="Enter email">
+        </div>
+        <button id="add-user-btn">Add user</button>
+        <br>
+        <br>
+        <table>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="user-list">
+
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        let users = [];
+        let userId = 1;
+
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const addUserBtn = document.getElementById('add-user-btn');
+        const userList = document.getElementById('user-list');
+
+        addUserBtn.addEventListener('click', addUser);
+
+        function addUser() {
+            const name = nameInput.value;
+            const email = emailInput.value;
+
+            if (name && email) {
+                const user = {
+                    id: userId++,
+                    name: name,
+                    email: email
+                };
+                users.push(user);
+                renderUserList();
+                nameInput.value = '';
+                emailInput.value = '';
+            } else {
+                alert('Please enter both name and email');
+            }
+        }
+
+        function renderUserList() {
+            userList.innerHTML = '';
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>
+                        <button class="action-btn edit-btn" onclick="editUser(${user.id})">Edit</button>
+                        <button class="action-btn delete-btn" onclick="deleteUser(${user.id})">Delete</button>
+                    </td>
+                `;
+                userList.appendChild(row);
+            });
+        }
+
+        function editUser(userId) {
+            const user = users.find(u => u.id === userId);
+            if (user) {
+                nameInput.value = user.name;
+                emailInput.value = user.email;
+                addUserBtn.textContent = 'Update User';
+                addUserBtn.removeEventListener('click', addUser);
+                addUserBtn.addEventListener('click', () => {
+                    user.name = nameInput.value;
+                    user.email = emailInput.value;
+                    renderUserList();
+                    addUserBtn.textContent = 'Add user';
+                    addUserBtn.removeEventListener('click', () => {});
+                    addUserBtn.addEventListener('click', addUser);
+                });
+            }
+        }
+
+        function deleteUser(userId) {
+            users = users.filter(u => u.id !== userId);
+            renderUserList();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+}
+
+.container {
+  width: 500px;
+  margin: 50px auto;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 20px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  text-align: left;
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.delete-btn {
+  background-color: #f44336;
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.delete-btn:hover {
+  background-color: #d9362d;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Add User</h2>
+  <form id="userForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+
+    <button type="submit">Add user</button>
+  </form>
+
+  <h2>Users</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="usersTableBody">
+      </tbody>
+  </table>
+</div>
+
+<script>
+const userForm = document.getElementById('userForm');
+const usersTableBody = document.getElementById('usersTableBody');
+let users = [];
+let nextId = 1;
+
+// Load existing users (if any) from local storage
+loadUsers();
+
+// Add user form submission handler
+userForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+
+  const name = document.getElementById('name').value;
+  const email = document.getElementById('email').value;
+
+  // Create new user object
+  const newUser = {
+    id: nextId,
+    name: name,
+    email: email
+  };
+
+  // Add user to array
+  users.push(newUser);
+
+  // Update next ID
+  nextId++;
+
+  // Save users to local storage
+  saveUsers();
+
+  // Clear form
+  userForm.reset();
+
+  // Render updated user list
+  renderUsers();
+});
+
+// Render user list
+function renderUsers() {
+  usersTableBody.innerHTML = ''; // Clear existing rows
+
+  for (const user of users) {
+    const row = usersTableBody.insertRow();
+    const idCell = row.insertCell();
+    const nameCell = row.insertCell();
+    const emailCell = row.insertCell();
+    const actionsCell = row.insertCell();
+
+    idCell.textContent = user.id;
+    nameCell.textContent = user.name;
+    emailCell.textContent = user.email;
+
+    // Add delete button
+    const deleteBtn = document.createElement('button');
+    deleteBtn.classList.add('delete-btn');
+    deleteBtn.textContent = 'Delete';
+    deleteBtn.addEventListener('click', () => {
+      deleteUser(user.id);
+    });
+
+    actionsCell.appendChild(deleteBtn);
+  }
+}
+
+// Delete user
+function deleteUser(userId) {
+  users = users.filter(user => user.id !== userId);
+  saveUsers();
+  renderUsers();
+}
+
+// Save users to local storage
+function saveUsers() {
+  localStorage.setItem('users', JSON.stringify(users));
+}
+
+// Load users from local storage
+function loadUsers() {
+  const storedUsers = localStorage.getItem('users');
+  if (storedUsers) {
+    users = JSON.parse(storedUsers);
+    // Update nextId based on the last user's ID
+    nextId = Math.max(...users.map(user => user.id)) + 1;
+  }
+}
+
+// Render initial user list
+renderUsers();
+</script>
+
+</body>
+</html>

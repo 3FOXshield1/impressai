@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+</head>
+<body>
+
+<h2>Add User</h2>
+
+<form>
+  <label for="fname">Name:</label><br>
+  <input type="text" id="fname" name="fname" value=""><br>
+  <label for="lname">Email:</label><br>
+  <input type="text" id="lname" name="lname" value=""><br><br>
+  <input type="button" value="Add user" onclick="addUser()">
+</form>
+
+<table id="myTable">
+  <tr>
+    <th>Id</th>
+    <th>Name</th>
+    <th>Email</th>
+  </tr>
+</table>
+
+<script>
+function addUser() {
+  var table = document.getElementById("myTable");
+  var row = table.insertRow();
+  var cell1 = row.insertCell();
+  var cell2 = row.insertCell();
+  var cell3 = row.insertCell();
+  var fname = document.getElementById("fname").value;
+  var lname = document.getElementById("lname").value;
+  cell1.innerHTML = table.rows.length - 1;
+  cell2.innerHTML = fname;
+  cell3.innerHTML = lname;
+}
+</script>
+
+</body>
+</html>
